@@ -1,0 +1,71 @@
+#!/usr/bin/env python3
+# coding: utf-8
+
+from hashlib import sha256
+from sys import argv
+import yaml
+
+week = argv[1]
+
+with open('diario-{}.yaml'.format(week)) as inf: 
+    data = inf.read()
+    signature = sha256(data.encode('utf8')).hexdigest()
+    diario = yaml.load(data)
+
+HEAD = """
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Diario</title>
+    <link rel="stylesheet" href="style.css">
+    <script>const signature = '{}'</script>
+    <script src="main.js"></script>
+</head>
+<body>
+""".format(signature)
+
+TAIL = """
+</body>
+</html>
+"""
+
+giorni_prima = []
+html = ['<table class=table><thead><tr><th>Giorno<th>Materia<th>Attivita<th>Fatto<th>Verificato<tbody>']
+num_giorno = 0
+for giorno, materie in diario.items():
+    row = []
+    num_materia = 0
+    for materia, attivita in materie.items():
+        pre = [giorno for giorno in giorni_prima if materia in diario[giorno].keys()]
+        if attivita is None: 
+            continue
+            if pre: 
+                attivita = ['[➡ {}]'.format(', '.join(map(lambda _: _.lower(), pre)))]
+            else:
+                continue
+        prima_attivita = True
+        num_attivita = 0
+        for a in attivita:
+            rid = '{}_{}_{}'.format(num_giorno, num_materia, num_attivita)
+            row.append(
+                '<tr>{}{}<td>{}{}'.format(
+                    '<th rowspan={{}}>{}'.format(giorno) if not row else '', 
+                    '<td rowspan={}>{}'.format(len(attivita), materia) if prima_attivita else '',
+                    '<span class="bg-warning">{}</span>'.format(a) if '!' in a else a,
+                    '<td id="id_0_{}" onclick="check(this)">&#x25a2;<td id="id_1_{}" onclick="check(this)">&#x25a2;'.format(rid, rid)
+                )
+            )
+            prima_attivita = False
+            num_attivita +=1
+        num_materia += 1
+    html.append('\n'.join(row).format(len(row)))
+    giorni_prima.append(giorno)
+    num_giorno += 1
+html.append('</table>')
+
+with open('diario-{}.html'.format(week), 'w') as ouf:
+    ouf.write(HEAD)
+    ouf.write('\n'.join(html))
+    ouf.write(TAIL)
