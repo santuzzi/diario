@@ -7,4 +7,5 @@ for w in {00..52}; do
         ./format $w
     fi
 done
+cp *css *js html
 mv *.html html
