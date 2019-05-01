@@ -1,3 +1,3 @@
 # Diario
 
-Questo è il diario dei miei compiti.
+Questi sono i file da cui sono generati i [miei diari](https://diario-santuzzi.netlify.com/).
