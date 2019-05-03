@@ -24,7 +24,7 @@ cat > html/index.html <<EOF
 EOF
 n=0
 for w in {00..52}; do
-    if [[ $(($n % 12)) = 0 ]]; then
+    if [[ $(($n % 6)) = 0 ]]; then
         echo "<tr>" >> html/index.html
     fi
     if [ -r diario-$w.yaml ]; then
