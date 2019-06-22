@@ -23,7 +23,7 @@ cat > html/index.html <<EOF
 <table class='table'>
 EOF
 n=0
-for w in {00..52}; do
+for w in {00..23} vacanze; do
     if [[ $(($n % 6)) = 0 ]]; then
         echo "<tr>" >> html/index.html
     fi
