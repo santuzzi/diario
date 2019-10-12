@@ -9,7 +9,7 @@ week = argv[1]
 
 with open('diario-{}.yaml'.format(week)) as inf: 
     data = inf.read()
-    signature = sha256(data.encode('utf8')).hexdigest()
+    signature = sha256('diario-{}.yaml'.format(week).encode('utf8')).hexdigest()
     diario = yaml.load(data)
 
 HEAD = """
