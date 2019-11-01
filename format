@@ -7,10 +7,10 @@ import yaml
 
 week = argv[1]
 
-with open('diario-{}.yaml'.format(week)) as inf: 
+with open('diario-{}.yaml'.format(week)) as inf:
     data = inf.read()
     signature = sha256('diario-{}.yaml'.format(week).encode('utf8')).hexdigest()
-    diario = yaml.load(data)
+    diario = yaml.load(data, Loader = yaml.FullLoader)
 
 HEAD = """
 <!doctype html>
@@ -39,9 +39,9 @@ for giorno, materie in diario.items():
     num_materia = 0
     for materia, attivita in materie.items():
         pre = [giorno for giorno in giorni_prima if materia in diario[giorno].keys()]
-        if attivita is None: 
+        if attivita is None:
             continue
-            if pre: 
+            if pre:
                 attivita = ['[➡ {}]'.format(', '.join(map(lambda _: _.lower(), pre)))]
             else:
                 continue
@@ -51,7 +51,7 @@ for giorno, materie in diario.items():
             rid = '{}_{}_{}'.format(num_giorno, num_materia, num_attivita)
             row.append(
                 '<tr>{}{}<td>{}{}'.format(
-                    '<th rowspan={{}}>{}'.format(giorno) if not row else '', 
+                    '<th rowspan={{}}>{}'.format(giorno) if not row else '',
                     '<td rowspan={}>{}'.format(len(attivita), materia) if prima_attivita else '',
                     '<span class="bg-warning">{}</span>'.format(a) if '!' in a else a,
                     '<td id="id_0_{}" onclick="check(this)">&#x25a2;<td id="id_1_{}" onclick="check(this)">&#x25a2;'.format(rid, rid)
